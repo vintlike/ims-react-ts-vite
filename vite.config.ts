@@ -3,10 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import externalGlobals from 'rollup-plugin-external-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig } from 'vite';
+import { defineConfig, ConfigEnv } from 'vite';
 import viteCompression from 'vite-plugin-compression';
 import { createHtmlPlugin } from 'vite-plugin-html';
-import viteImagemin from 'vite-plugin-imagemin';
+// import viteImagemin from 'vite-plugin-imagemin';
 import svgrPlugin from 'vite-plugin-svgr';
 
 /**
@@ -20,7 +20,7 @@ const globals = externalGlobals({
 });
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }: { mode: string }) => {
+export default defineConfig(({ mode }:ConfigEnv) => {
   // 判断当前是否为测试环境，注意构建命令要使用 vite build --mode test
   const isTest = mode === 'test';
 
@@ -117,68 +117,68 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     plugins: [
       react(),
-      viteCompression({
-        //生成压缩包gz
-        verbose: true,
-        disable: false,
-        threshold: 10240,
-        algorithm: 'gzip',
-        ext: '.gz',
-      }),
-      viteImagemin({
-        gifsicle: {
-          optimizationLevel: 7,
-          interlaced: false,
-        },
-        optipng: {
-          optimizationLevel: 7,
-        },
-        mozjpeg: {
-          quality: 50,
-        },
-        pngquant: {
-          quality: [0.8, 0.9],
-          speed: 4,
-        },
-        svgo: {
-          plugins: [
-            {
-              name: 'removeViewBox',
-            },
-            {
-              name: 'removeEmptyAttrs',
-              active: false,
-            },
-          ],
-        },
-      }),
+      // viteCompression({
+      //   //生成压缩包gz
+      //   verbose: true,
+      //   disable: false,
+      //   threshold: 10240,
+      //   algorithm: 'gzip',
+      //   ext: '.gz',
+      // }),
+      // viteImagemin({
+      //   gifsicle: {
+      //     optimizationLevel: 7,
+      //     interlaced: false,
+      //   },
+      //   optipng: {
+      //     optimizationLevel: 7,
+      //   },
+      //   mozjpeg: {
+      //     quality: 50,
+      //   },
+      //   pngquant: {
+      //     quality: [0.8, 0.9],
+      //     speed: 4,
+      //   },
+      //   svgo: {
+      //     plugins: [
+      //       {
+      //         name: 'removeViewBox',
+      //       },
+      //       {
+      //         name: 'removeEmptyAttrs',
+      //         active: false,
+      //       },
+      //     ],
+      //   },
+      // }),
       // 为打包后的文件提供传统浏览器兼容性支持
-      !isTest &&
-        legacyPlugin({
-          targets: ['defaults', 'not IE 11'],
-        }),
-      createHtmlPlugin({
-        minify: true,
-        entry: 'src/main.tsx',
-        template: 'index.html',
-        inject: {
-          data: {
-            polyfill: isTest
-              ? 'https://polyfill.io/v3/polyfill.min.js?features=es2015%2Ces2016%2Ces2017%2Ces2018%2Ces2019%2Ces2020%2Ces2021%2Ces2022'
-              : '',
-          },
-        },
-      }),
+      // !isTest &&
+      //   legacyPlugin({
+      //     targets: ['defaults', 'not IE 11'],
+      //   }),
+      // createHtmlPlugin({
+      //   minify: true,
+      //   entry: 'src/main.tsx',
+      //   template: 'index.html',
+      //   inject: {
+      //     data: {
+      //       polyfill: isTest
+      //         ? 'https://polyfill.io/v3/polyfill.min.js?features=es2015%2Ces2016%2Ces2017%2Ces2018%2Ces2019%2Ces2020%2Ces2021%2Ces2022'
+      //         : '',
+      //     },
+      //   },
+      // }),
 
-      svgrPlugin({
-        svgrOptions: {
-          icon: true,
-          // ...svgr options (https://react-svgr.com/docs/options/)
-        },
-      }),
+      // svgrPlugin({
+      //   svgrOptions: {
+      //     icon: true,
+      //     // ...svgr options (https://react-svgr.com/docs/options/)
+      //   },
+      // }),
 
       // 将 visualizer 插件放到最后的位置
-      visualizer(),
+      // visualizer(),
     ],
 
     css: {

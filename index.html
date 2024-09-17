@@ -11,8 +11,8 @@
     <script src="https://.../jspdf.polyfills.umd.js"></script>
     <script src="https://.../jspdf.umd.min.js"></script>
     <script src="https://.../video.min.js"></script> -->
-    <!-- 注意在这里引入插入的polyfill -->
-    <script src="<%- polyfill %>"></script>
+    <!-- 娉ㄦ剰鍦ㄨ繖閲屽紩鍏ユ彃鍏ョ殑polyfill -->
+    <!-- <script src="<%- polyfill %>"></script> -->
   </head>
   <body>
     <script>
@@ -20,5 +20,15 @@
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window._AMapSecurityConfig = {
+        // serviceHost:'鎮ㄧ殑浠ｇ悊鏈嶅姟鍣ㄥ煙鍚嶆垨鍦板潃/_AMapService',
+        // 渚嬪 锛歴erviceHost:'http://1.1.1.1:80/_AMapService',
+        securityJsCode:'85b2147dae78f171665334625793a1b1'
+      };
+    </script>
+    <script src="https://webapi.amap.com/maps?v=2.0&key=9115b18d7c8cf97033f0b4f1faa7a259"></script>
+    
+    <script src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=c3PVwY44PeR2imjoHfIN9p9GWBXRnJFm"></script>
   </body>
 </html>

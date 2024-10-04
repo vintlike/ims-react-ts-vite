@@ -8,6 +8,9 @@ export const MapLayout = styled.div`
   width: 100%;
   height: 100%;
   margin: 0 auto;
+  .map-head {
+    margin-bottom: 20px;
+  }
   .map-side {
     /* position: absolute;
     top: 0;
@@ -32,6 +35,18 @@ export const MapLayout = styled.div`
     flex-direction: column;
   }
 
+  .map-form {
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: 300px;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.6);
+  }
   .ant-form {
     width: 100%;
     .ant-form-item {
@@ -45,6 +60,12 @@ export const MapLayout = styled.div`
   }
 
   .map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9;
     display: flex;
     flex: 1;
     width: 100%;

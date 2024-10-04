@@ -26,6 +26,9 @@ dependencies:
   axios:
     specifier: ^1.7.7
     version: 1.7.7
+  bmap-jsapi-loader:
+    specifier: ^1.0.2
+    version: 1.0.2
   classnames:
     specifier: ^2.5.1
     version: 2.5.1
@@ -3395,6 +3398,10 @@ packages:
 
   /batch-processor@1.0.0:
     resolution: {integrity: sha512-xoLQD8gmmR32MeuBHgH0Tzd5PuSZx71ZsbhVxOCRbgktZEPe4SQy7s9Z50uPp0F/f7iw2XmkHN2xkgbMfckMDA==}
+    dev: false
+
+  /bmap-jsapi-loader@1.0.2:
+    resolution: {integrity: sha512-P7y7wj96sQZMGsEaiZnlUsLI023lF4w2+fwnZ8cjRWymJKQMqN1TVCN1Wun7NecA8xBAZI53d9QNqhinyM+9gA==}
     dev: false
 
   /boolbase@1.0.0:

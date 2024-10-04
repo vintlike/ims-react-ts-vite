@@ -1,8 +1,16 @@
-import { log } from 'console';
-import { MapKeyConfig } from './MapConfig';
+import { Popup } from '@antv/l7';
 import gcoord from 'gcoord';
+import {
+  IFeatureCollectionProps,
+  IFeatureItemProps,
+  IGeometryType,
+  MapKeyConfig,
+} from './MapConfig';
 
-export const lnglatSwitch = (value: string, mapType: string) => {
+/**
+ * 坐标转换器
+ */
+export const lnglatConverter = (value: string, mapType: string) => {
   if (!value) {
     return;
   }
@@ -11,23 +19,16 @@ export const lnglatSwitch = (value: string, mapType: string) => {
 
   let result = [Number(lng), Number(lat)];
 
-  if (mapType === 'baidu') {
-    result = gcoord.transform(
-      result as any, // 经纬度坐标
-      gcoord.WGS84, // 当前坐标系
-      gcoord.BD09 // 目标坐标系
-    );
-  } else if (mapType === 'gaode') {
-    // 将WGS84坐标转换为GCJ02坐标
-    result = gcoord.transform(
-      result as any, // 经纬度坐标
-      gcoord.WGS84, // 当前坐标系
-      gcoord.GCJ02 // 目标坐标系
-    );
-  }
+  // 将WGS84坐标转换为GCJ02坐标
+  result = gcoord.transform(
+    result as any, // 经纬度坐标
+    gcoord.WGS84, // 当前坐标系
+    mapType === 'bmap' ? gcoord.BD09 : gcoord.GCJ02, // 目标坐标系
+  );
 
   return result;
 };
+
 /**
  * 解析规则：
  * 先截取从开始到第一次出现逗号","时的字符坐标
@@ -37,7 +38,7 @@ export const lnglatSwitch = (value: string, mapType: string) => {
 
 export const lnglatParser = (value: string, mapType: string) => {
   if (!value) {
-    return;
+    return [];
   }
 
   const regComma = /\s*,\s*/;
@@ -61,22 +62,86 @@ export const lnglatParser = (value: string, mapType: string) => {
 
   lngAndLatArr.forEach((item) => {
     const [lng, lat] = item.split(
-      hasLat ? (isUnderscore ? regUnderscore : regBlank) : regComma
+      hasLat ? (isUnderscore ? regUnderscore : regBlank) : regComma,
     );
 
-    const result = lnglatSwitch(`${lng},${lat}`, mapType);
+    const result = lnglatConverter(`${lng},${lat}`, mapType);
     if (result) {
       val.push(result);
     }
   });
 
-  return val;
+  return [val];
 };
 
-export function loadMapScript(code: string): Promise<any> {
+/**
+ * 创建线图层或点图层数据
+ */
+export const getMapData = (
+  features: IFeatureItemProps[],
+  type: IGeometryType,
+) => {
+  const mapData: IFeatureCollectionProps = {
+    type: 'FeatureCollection',
+    features: features
+      ?.filter((item: any) => item !== undefined)
+      ?.map((item: any) => {
+        return {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type,
+            coordinates: item,
+          },
+        };
+      }),
+  };
+
+  return mapData;
+};
+
+/**
+ * 显示当前坐标信息
+ * @param scene
+ * @param layer
+ */
+export const showLnglatInfo = (scene: any, layer: any) => {
+  layer?.on('mousemove', (e: any) => {
+    const popup = new Popup({
+      offsets: [0, 0],
+      closeButton: false,
+    })
+      .setLnglat(e.lngLat)
+      .setHTML(`<span>坐标：【${e.lngLat.lng}, ${e.lngLat.lat}】</span>`);
+    scene?.addPopup(popup);
+  });
+};
+
+export function loadScript(url: string) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.setAttribute('type', 'text/javascript');
+    script.setAttribute('async', '');
+    script.setAttribute('src', url);
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+/**
+ * 加载地图脚本
+ * @param code
+ * @returns
+ */
+export function loadMapScript(code: string) {
   const { key, securityJsCode, version } = MapKeyConfig[code];
-  return new Promise<any>((resolve, reject) => {
-    const instance = window.BMapGL;
+  return new Promise((resolve, reject) => {
+    const instance = code === 'bmap' ? window.BMapGL : window.AMap;
+    const urlMap: Record<string, string> = {
+      amap: `https://webapi.amap.com/maps?v=${version}&key=${key}&callback=onCallback`,
+      bmap: `https://api.map.baidu.com/api?v=${version}&type=webgl&ak=${key}&callback=onCallback`,
+    };
     if (typeof instance !== 'undefined') {
       resolve(instance);
       return;
@@ -85,19 +150,20 @@ export function loadMapScript(code: string): Promise<any> {
       resolve(instance);
     };
 
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    if (code === 'baidu') {
-      script.src = `https://api.map.baidu.com/api?v=${version}&type=webgl&ak=${key}&callback=onCallback`;
-    } else {
-      (window as any)._AMapSecurityConfig = {
-        // serviceHost:'您的代理服务器域名或地址/_AMapService',
-        // 例如 ：serviceHost:'http://1.1.1.1:80/_AMapService',
-        securityJsCode
-      };
-      script.src = `https://webapi.amap.com/maps?v=${version}&key=${key}&callback=onCallback`;
-    }
-    script.onerror = reject;
-    document.body.appendChild(script);
+    return loadScript(urlMap[code])
+      .then(() => {
+        if (code === 'amap') {
+          (window as any)._AMapSecurityConfig = {
+            // serviceHost:'您的代理服务器域名或地址/_AMapService',
+            // 例如 ：serviceHost:'http://1.1.1.1:80/_AMapService',
+            securityJsCode,
+          };
+        }
+        resolve(true);
+      })
+      .catch((err) => {
+        console.log('加载地图脚本失败');
+        reject(err);
+      });
   });
 }

@@ -16,9 +16,12 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    /* 定义变量未使用禁止报错 */
+    "noUnusedLocals": false,
+    /* 定义入参未使用禁止报错 */
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "allowArbitraryExtensions": true,
 
     "composite": true,
     "allowJs": true,
@@ -29,15 +32,16 @@
 
     "baseUrl": ".",
     "paths": {
-      "^~": ["/"],
       "@": ["src"],
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["vite/client", "node"]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
+    "src/**/*.jsx",
     "src/**/*.vue",
     "vite.config.ts"
   ]

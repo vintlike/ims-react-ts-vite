@@ -1,6 +1,6 @@
 import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
-import React from 'react';
+         import React from 'react';
 import MapAdapter from './pages/Map/MapAdapter';
 
 const App: React.FC = () => {
@@ -8,7 +8,7 @@ const App: React.FC = () => {
     <Layout style={{ height: '100%', color: '#000' }}>
       <Content
         style={{
-          height: 'auto',
+             height: 'auto',
           overflow: 'auto',
           padding: 16,
         }}>

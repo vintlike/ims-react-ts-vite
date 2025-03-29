@@ -2,6 +2,7 @@
   "name": "ims-react-ts-vite",
   "version": "0.0.0",
   "private": true,
+  "author": "",
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
@@ -18,7 +19,8 @@
     "lint:style": "stylelint src/**/*.less --fix --custom-syntax postcss-less",
     "prepare": "husky install",
     "prettier": "prettier --write .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "npm run dev"
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
